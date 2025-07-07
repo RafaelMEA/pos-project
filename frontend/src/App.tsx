@@ -1,13 +1,22 @@
-import { Button } from "@/components/ui/button"
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { MainLayout } from "./components/layout/MainLayout";
+import { Toaster } from "sonner";
+import Dashboard from "./pages/admin/Dashboard";
 
 function App() {
   return (
-    <>
-      <div className="flex min-h-svh flex-col items-center justify-center">
-      <Button>Click me</Button>
-    </div>
-    </>
-  )
+    <Router>
+      <MainLayout>
+        <Routes>
+          <Route
+            path="/"
+            element={<Dashboard />}
+          />
+        </Routes>
+        <Toaster position="top-right" richColors />
+      </MainLayout>
+    </Router>
+  );
 }
 
-export default App
+export default App;
