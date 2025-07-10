@@ -1,13 +1,47 @@
-import { Button } from "@/components/ui/button"
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { MainLayout } from "./components/layout/MainLayout";
+import { Toaster } from "sonner";
+import Dashboard from "./pages/admin/Dashboard";
+import Products from "./pages/admin/Products";
+import Categories from "./pages/admin/categories/Categories";
+import Transaction from "./pages/admin/Transaction";
+import Customers from "./pages/admin/Customers";
+import Users from "./pages/admin/Users";
 
 function App() {
   return (
-    <>
-      <div className="flex min-h-svh flex-col items-center justify-center">
-      <Button>Click me</Button>
-    </div>
-    </>
-  )
+    <Router>
+      <MainLayout>
+        <Routes>
+          <Route
+            path="/"
+            element={<Dashboard />}
+          />
+          <Route
+            path="/products"
+            element={<Products />}
+          />
+          <Route
+            path="/categories"
+            element={<Categories />}
+          />
+          <Route
+            path="/transaction"
+            element={<Transaction />}
+          />
+          <Route
+            path="/customers"
+            element={<Customers />}
+          />
+          <Route
+            path="/users"
+            element={<Users />}
+          />
+        </Routes>
+        <Toaster position="top-right" richColors />
+      </MainLayout>
+    </Router>
+  );
 }
 
-export default App
+export default App;
