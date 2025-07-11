@@ -1,3 +1,6 @@
+const API_URL = import.meta.env.VITE_API_URL;
+const API_KEY = import.meta.env.VITE_API_KEY;
+
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { Button } from "@/components/ui/button";
@@ -14,8 +17,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
@@ -23,24 +24,34 @@ import { MoreHorizontal, Plus } from "lucide-react";
 
 import AddCategoryModal from "./AddCategoryModal";
 import UpdateCategoryModal from "./UpdateCategoryModal";
-
-const API_URL = import.meta.env.VITE_API_URL;
-const API_KEY = import.meta.env.VITE_API_KEY;
+import DeleteCategoryModal from "./DeleteCategoryModal";
+import LoadingAnimation from "@/components/LoadingAnimation";
 
 export type Category = {
   category_id: number;
   category_name: string;
-}
+};
 
 const Categories = () => {
+  // for loading
+  const [loading, setLoading] = useState(true)
+
+  // for add
+  const [showAddModal, setShowAddModal] = useState(false)
+
+  // for update
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(
     null
   );
 
+  // for delete
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+
   const [categories, setCategories] = useState<Category[]>([]);
   const fetchCategories = async () => {
     try {
+      setLoading(true)
       const response = await axios.get(`${API_URL}/api/categories`, {
         headers: {
           "x-api-key": API_KEY,
@@ -49,6 +60,8 @@ const Categories = () => {
       setCategories(response.data);
     } catch (error) {
       console.error("Error fetching categories:", error);
+    } finally {
+      setLoading(false);
     }
   };
   useEffect(() => {
@@ -62,11 +75,17 @@ const Categories = () => {
       </div>
       <div className="flex gap-4 items-center justify-between mb-4">
         <Input placeholder="Search category..." />
-        <Button>
+        <Button onClick={() => {
+          setShowAddModal(true)
+        }}>
           <Plus className="mr-1 text-white" />
           Add Category
         </Button>
       </div>
+      {loading ? (
+      <LoadingAnimation/>
+    ) : (
+      <>
       <div>
         <Table>
           <TableHeader>
@@ -101,7 +120,7 @@ const Categories = () => {
                         <DropdownMenuItem
                           onClick={() => {
                             setSelectedCategory(category);
-                            setShowUpdateModal(true);
+                            setShowDeleteModal(true);
                           }}
                         >
                           Delete
@@ -121,6 +140,9 @@ const Categories = () => {
           </TableBody>
         </Table>
       </div>
+      </>
+      )}
+      
       {showUpdateModal && selectedCategory && (
         <UpdateCategoryModal
           category={selectedCategory}
@@ -128,7 +150,21 @@ const Categories = () => {
           onUpdated={fetchCategories} // Refresh data after update
         />
       )}
+      {showAddModal && (
+        <AddCategoryModal
+        onClose={() => setShowAddModal(false)}
+        onUpdated={fetchCategories}
+        />
+      )}
+      {showDeleteModal && selectedCategory && (
+        <DeleteCategoryModal
+          category={selectedCategory}
+          onClose={() => setShowDeleteModal(false)}
+          onUpdated={fetchCategories} // Refresh data after delete
+        />
+      )}
     </div>
+    
   );
 };
 

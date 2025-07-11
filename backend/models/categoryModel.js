@@ -23,7 +23,7 @@ const getCategories = async () => {
   }
 };
 
-const storeCatergories = async (categoryName) => {
+const storeCategories = async (categoryName) => {
     try {
         const {data, error} = await supabase
             .from("categories")
@@ -32,6 +32,7 @@ const storeCatergories = async (categoryName) => {
                     category_name: categoryName
                 }
             ])
+            .select();
         
         if(error) {
             console.error('Error storing category:', error);
@@ -47,7 +48,7 @@ const storeCatergories = async (categoryName) => {
     }
 }
 
-const updateCategory = async (categoryId, categoryName) => {
+const updateCategories = async (categoryId, categoryName) => {
     try {
         const {data, error} = await supabase
             .from("categories")
@@ -71,8 +72,31 @@ const updateCategory = async (categoryId, categoryName) => {
     }
 }
 
+const deleteCategories = async (categoryId) => {
+    try {
+        const {data, error} = await supabase
+            .from("categories")
+            .delete()
+            .eq("category_id", categoryId)
+            .select();
+        
+        if(error) {
+            console.error('Error deleting category:', error);
+            throw new Error(`Failed to delete category: ${error.message}`);
+        }
+        return {data, error:null}
+    } catch (error) {
+        console.error('Unexpected error in deleteCategory:', error);
+        return { 
+            data: null, 
+            error: error.message || 'An unexpected error occurred' 
+        };
+    }
+}
+
 module.exports = {
     getCategories,
-    storeCatergories,
-    updateCategory
+    storeCategories,
+    updateCategories,
+    deleteCategories
 };

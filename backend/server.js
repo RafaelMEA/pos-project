@@ -15,6 +15,7 @@ app.use(apiKeyAuth);
 const categoryRoutes = require("./routes/categoryRoutes");
 app.use("/api/categories", categoryRoutes);
 
+
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
   console.log("API Key Authentication is enabled");
