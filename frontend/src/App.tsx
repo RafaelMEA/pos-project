@@ -2,7 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { MainLayout } from "./components/layout/MainLayout";
 import { Toaster } from "sonner";
 import Dashboard from "./pages/admin/Dashboard";
-import Products from "./pages/admin/Products";
+import Products from "./pages/admin/products/Products";
 import Categories from "./pages/admin/categories/Categories";
 import Transaction from "./pages/admin/Transaction";
 import Customers from "./pages/admin/Customers";

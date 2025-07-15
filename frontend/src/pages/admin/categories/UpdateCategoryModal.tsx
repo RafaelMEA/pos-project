@@ -26,6 +26,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 import axios from "axios";
 
+import { useAlert } from "@/contexts/AlertContext";
+
 const API_URL = import.meta.env.VITE_API_URL;
 const API_KEY = import.meta.env.VITE_API_KEY;
 
@@ -43,6 +45,7 @@ const formSchema = z.object({
 type FormData = z.infer<typeof formSchema>;
 
 const UpdateCategoryModal = ({ category, onClose, onUpdated }: Props) => {
+  const { addAlert } = useAlert();
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -66,8 +69,10 @@ const UpdateCategoryModal = ({ category, onClose, onUpdated }: Props) => {
       onUpdated();
       onClose();
       console.log("Category updated successfully");
+      addAlert("success", "Update Category", "Category updated successfully");
     } catch (error) {
       console.error("Failed to update category:", error);
+      addAlert("error", "Update category", "Failed to update category");
     }
   };
 

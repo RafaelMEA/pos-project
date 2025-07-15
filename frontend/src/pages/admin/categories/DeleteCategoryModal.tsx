@@ -20,6 +20,8 @@ import type { Category } from "./Categories";
 
 import LoadingAnimation from "@/components/LoadingAnimation";
 
+import { useAlert } from "@/contexts/AlertContext";
+
 type Props = {
   category: Category;
   onClose: () => void;
@@ -28,6 +30,7 @@ type Props = {
 
 const DeleteCategoryModal = ({ category, onClose, onUpdated }: Props) => {
   const [loading, setLoading] = useState(false);
+  const { addAlert } = useAlert();
   const onDelete = async () => {
     try {
       setLoading(true);
@@ -43,8 +46,10 @@ const DeleteCategoryModal = ({ category, onClose, onUpdated }: Props) => {
       onUpdated();
       onClose();
       console.log("Category deleted successfully");
+      addAlert("success", "Delete Category", "Category deleted successfully");
     } catch (error) {
       console.error("Failed to delete category:", error);
+      addAlert("error", "Delete category", "Failed to delete category");
     } finally {
       setLoading(false);
     }

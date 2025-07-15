@@ -1,31 +1,60 @@
 import { useState } from "react";
-import { Layout, Menu, ShoppingCart, ShoppingBag, User, ChartBarStacked, Users} from "lucide-react";
+import {
+  Layout,
+  Menu,
+  ShoppingCart,
+  ShoppingBag,
+  User,
+  ChartBarStacked,
+  Users,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { NavLink } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { AlertMessage } from "@/components/AlertMessage";
 
 interface MainLayoutProps {
   children: React.ReactNode;
 }
 
-const navigation = [{ name: "Dashboard", href: "/", icon: Layout }, {
-  name: "Products", href: "/products", icon: ShoppingBag
-}, {
-  name: "Categories", href: "/categories", icon: ChartBarStacked
-}, {
-  name: "Transaction", href: "/transaction", icon: ShoppingCart
-}, {
-  name: "Customers", href: "/customers", icon: User
-}, {
-  name: "Users", href: "/users", icon: Users
-}];
+const navigation = [
+  { name: "Dashboard", href: "/", icon: Layout },
+  {
+    name: "Products",
+    href: "/products",
+    icon: ShoppingBag,
+  },
+  {
+    name: "Categories",
+    href: "/categories",
+    icon: ChartBarStacked,
+  },
+  {
+    name: "Transaction",
+    href: "/transaction",
+    icon: ShoppingCart,
+  },
+  {
+    name: "Customers",
+    href: "/customers",
+    icon: User,
+  },
+  {
+    name: "Users",
+    href: "/users",
+    icon: Users,
+  },
+];
 
 export function MainLayout({ children }: MainLayoutProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
     <div className="flex h-screen bg-gray-50">
+      {/* Alert Messages */}
+      <AlertMessage />
+
       {/* Mobile sidebar */}
       <div className="md:hidden">
         <Sheet open={isOpen} onOpenChange={setIsOpen}>

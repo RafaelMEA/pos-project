@@ -26,6 +26,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 import axios from "axios";
 
+import { useAlert } from "@/contexts/AlertContext";
+
 type Props = {
   onClose: () => void;
   onUpdated: () => void;
@@ -39,6 +41,7 @@ const formSchema = z.object({
 type FormData = z.infer<typeof formSchema>;
 
 const AddCategoryModal = ({ onClose, onUpdated }: Props) => {
+  const { addAlert } = useAlert();
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
   });
@@ -59,8 +62,10 @@ const AddCategoryModal = ({ onClose, onUpdated }: Props) => {
       onUpdated();
       onClose();
       console.log("Category added successfully");
+      addAlert("success", "Add Category", "Category added successfully");
     } catch (error) {
       console.error("Failed to add category:", error);
+      addAlert("error", "Add category", "Failed to add category");
     }
   };
 
