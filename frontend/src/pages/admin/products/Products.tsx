@@ -1,10 +1,16 @@
-import { useState } from "react";
+const API_URL = import.meta.env.VITE_API_URL;
+const API_KEY = import.meta.env.VITE_API_KEY;
+
+import { useState, useEffect } from "react";
 import kopiko from "@/assets/kopiko.jfif";
 
 import { Pencil, Trash, Plus, Cross } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import LoadingAnimation from "@/components/LoadingAnimation";
+
+import axios from "axios";
 
 import {
   Card,
@@ -15,8 +21,62 @@ import {
 
 import AddProductModal from "./AddProductModal";
 
+export type Product = {
+  product_id: number;
+  product_name: string;
+  category_id: number;
+  price: number;
+};
+
+export type Category = {
+  category_id: number;
+  category_name: string;
+};
+
 const Products = () => {
+  const [loading, setLoading] = useState(false);
+
+  // fetching categories
+  const [categories, setCategories] = useState<Category[]>([]);
+  const fetchCategories = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.get(`${API_URL}/api/categories`, {
+        headers: {
+          "x-api-key": API_KEY,
+        },
+      });
+      setCategories(response.data);
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const [products, setProducts] = useState<Product[]>([]);
   const [showAddModal, setShowAddModal] = useState(false);
+
+  const fetchProducts = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.get(`${API_URL}/api/products`, {
+        headers: {
+          "x-api-key": API_KEY,
+        },
+      });
+      setProducts(response.data);
+    } catch (error) {
+      console.error("Error fetching products:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchProducts();
+    fetchCategories();
+  }, []);
   return (
     <div className="mb-4">
       <h1 className="text-2xl font-bold mb-4">Products</h1>
@@ -34,28 +94,52 @@ const Products = () => {
           <Cross className="mr-1 text-white" />
           Recover Products
         </Button>
+      </div>
 
-      </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-4">
-        <Card className="gap-2">
-          <CardHeader className=''>
-            <img src={kopiko} alt="Kopiko" className="h-full w-full object-cover bg-none"/>
-          </CardHeader>
-          <CardContent className="font-bold">Category Name</CardContent>
-          <CardContent className="font-bold">Kopiko</CardContent>
-          <CardContent>Price</CardContent>
-          <div className="flex justify-center items-center">
-            <CardFooter>
-              <Pencil className="h-5 w-5" />
-            </CardFooter>
-            <CardFooter>
-              <Trash className="h-5 w-5" />
-            </CardFooter>
-          </div>
-        </Card>
-      </div>
+      {loading ? (
+        <LoadingAnimation />
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-4">
+          {products.length > 0 ? (
+            products.map((product) => (
+              <Card className="gap-2" key={product.product_id}>
+                <CardHeader className="">
+                  <img
+                    src={kopiko}
+                    alt="Kopiko"
+                    className="h-full w-full object-cover bg-none"
+                  />
+                </CardHeader>
+                <CardContent className="font-bold">
+                  {categories.find(
+                    (cat) => cat.category_id === product.category_id
+                  )?.category_name || "Uncategorized"}
+                </CardContent>
+                <CardContent className="font-bold">
+                  {product.product_name}
+                </CardContent>
+                <CardContent>₱{product.price}</CardContent>
+                <div className="flex justify-center items-center">
+                  <CardFooter>
+                    <Pencil className="h-5 w-5" />
+                  </CardFooter>
+                  <CardFooter>
+                    <Trash className="h-5 w-5" />
+                  </CardFooter>
+                </div>
+              </Card>
+            ))
+          ) : (
+            <p>No products found.</p>
+          )}
+        </div>
+      )}
       {showAddModal && (
-        <AddProductModal onClose={() => setShowAddModal(false)} onUpdated={() => setShowAddModal(false)} />
+        <AddProductModal
+          onClose={() => setShowAddModal(false)}
+          onUpdated={() => setShowAddModal(false)}
+          categories={categories}
+        />
       )}
     </div>
   );

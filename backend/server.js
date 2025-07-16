@@ -15,6 +15,9 @@ app.use("/api", apiKeyAuth);
 const categoryRoutes = require("./routes/categoryRoutes");
 app.use("/api/categories", categoryRoutes);
 
+const productRoutes = require("./routes/productRoutes");
+app.use("/api/products", productRoutes);
+
 const distPath = path.join(__dirname, "../backend/dist/");
 app.use(express.static(distPath));
 

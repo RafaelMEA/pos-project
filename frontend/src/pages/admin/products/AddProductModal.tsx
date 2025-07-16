@@ -19,6 +19,13 @@ import {
 } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -30,9 +37,12 @@ import axios from "axios";
 
 import PictureInput from "@/components/ui/PictureInput";
 
+import type { Category } from "./Products";
+
 type Props = {
   onClose: () => void;
   onUpdated: () => void;
+  categories: Category[];
 };
 
 const formSchema = z.object({
@@ -47,8 +57,11 @@ const formSchema = z.object({
 
 type FormData = z.infer<typeof formSchema>;
 
-const AddProductModal = ({ onClose, onUpdated }: Props) => {
+const AddProductModal = ({ onClose, onUpdated, categories }: Props) => {
+  // alert
   const { addAlert } = useAlert();
+
+  // form
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
   });
@@ -85,16 +98,18 @@ const AddProductModal = ({ onClose, onUpdated }: Props) => {
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onAdd)} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4 ">
-              <div>
+              <div className="">
                 <FormField
                   control={form.control}
                   name="product_image"
                   render={({ field }) => (
-                    <FormItem className="">
-                      <FormLabel>Image (optional)</FormLabel>
-                      <FormControl>
+                    <FormItem className="flex flex-col h-full">
+                      <FormLabel className="flex-[5%]">
+                        Image (optional)
+                      </FormLabel>
+                      <FormControl className="flex-[95%]">
                         <PictureInput
-                          className="h-full"
+                          className=""
                           onFileSelect={(file) => {
                             field.onChange(file);
                           }}
@@ -195,9 +210,26 @@ const AddProductModal = ({ onClose, onUpdated }: Props) => {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Category *</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Product category" {...field} />
-                      </FormControl>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger className="w-full">
+                            <SelectValue placeholder="Select a category" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {categories.map((category) => (
+                            <SelectItem
+                              key={category.category_id}
+                              value={category.category_id.toString()}
+                            >
+                              {category.category_name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -205,11 +237,11 @@ const AddProductModal = ({ onClose, onUpdated }: Props) => {
               </div>
             </div>
           </form>
-          <DialogFooter className="flex justify-between w-full">
+          <DialogFooter className="flex w-full justify-between">
             <Button variant="outline" type="button" onClick={onClose}>
               Cancel
             </Button>
-            <Button type="submit">Add Category</Button>
+            <Button type="submit">Add Product</Button>
           </DialogFooter>
         </Form>
       </DialogContent>
