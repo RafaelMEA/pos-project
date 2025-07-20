@@ -33,7 +33,6 @@ type Props = {
   onUpdated: () => void;
 };
 
-
 const formSchema = z.object({
   category_name: z.string().min(1, "Category name is required"),
 });
@@ -48,16 +47,18 @@ const AddCategoryModal = ({ onClose, onUpdated }: Props) => {
 
   const onAdd = async (data: FormData) => {
     try {
-      const response = await axios.post(`${API_URL}/api/categories`, 
+      const response = await axios.post(
+        `${API_URL}/api/categories`,
         {
           category_name: data.category_name,
         },
         {
-        headers: {
-          "x-api-key": API_KEY,
-          "Content-Type": "application/json",
-        },
-      });
+          headers: {
+            "x-api-key": API_KEY,
+            "Content-Type": "application/json",
+          },
+        }
+      );
       console.log(response.data);
       onUpdated();
       onClose();
