@@ -26,6 +26,7 @@ export type Product = {
   product_name: string;
   category_id: number;
   price: number;
+  image: string;
 };
 
 export type Category = {
@@ -105,8 +106,8 @@ const Products = () => {
               <Card className="gap-2" key={product.product_id}>
                 <CardHeader className="">
                   <img
-                    src={kopiko}
-                    alt="Kopiko"
+                    src={product.image || kopiko}
+                    alt={product.product_name || "Product Image"}
                     className="h-full w-full object-cover bg-none"
                   />
                 </CardHeader>
@@ -130,14 +131,14 @@ const Products = () => {
               </Card>
             ))
           ) : (
-            <p>No products found.</p>
+            <p className="col-span-4 flex justify-center items-center">No products found.</p>
           )}
         </div>
       )}
       {showAddModal && (
         <AddProductModal
           onClose={() => setShowAddModal(false)}
-          onUpdated={() => setShowAddModal(false)}
+          onUpdated={fetchProducts}
           categories={categories}
         />
       )}

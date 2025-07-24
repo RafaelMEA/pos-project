@@ -1,6 +1,8 @@
 const API_URL = import.meta.env.VITE_API_URL;
 const API_KEY = import.meta.env.VITE_API_KEY;
 
+import { uploadImage } from "@/lib/uploadImage";
+
 // components
 import {
   Dialog,
@@ -49,8 +51,8 @@ const formSchema = z.object({
   product_name: z.string().min(1, "Product name is required"),
   product_image: z.instanceof(File).optional(),
   product_details: z.string().min(1, "Product details is required"),
-  product_price: z.number().min(1, "Product price is required"),
-  product_quantity: z.number().min(1, "Product quantity is required"),
+  product_price: z.coerce.number().min(1, "Product price is required"),
+  product_quantity: z.coerce.number().min(1, "Product quantity is required"),
   product_supplier: z.string().min(1, "Product supplier is required"),
   product_category: z.string().min(1, "Product category is required"),
 });
@@ -66,11 +68,30 @@ const AddProductModal = ({ onClose, onUpdated, categories }: Props) => {
     resolver: zodResolver(formSchema),
   });
 
-  const onAdd = async () => {
+  const onAdd = async (data: FormData) => {
     try {
+
+      const file = data.product_image as File;
+
+      let imageURL = ""
+
+      if (file && file.size > 0) {
+        imageURL = await uploadImage(file);
+      }
+
+      const productData = {
+        product_name: data.product_name,
+        product_details: data.product_details,
+        price: data.product_price,
+        quantity: data.product_quantity,
+        supplier: data.product_supplier,
+        image: imageURL,
+        category_id: data.product_category,
+      };
+
       const response = await axios.post(
         `${API_URL}/api/products`,
-        {},
+        productData,
         {
           headers: {
             "x-api-key": API_KEY,
@@ -86,6 +107,7 @@ const AddProductModal = ({ onClose, onUpdated, categories }: Props) => {
     } catch (error) {
       console.error("Failed to add product:", error);
       addAlert("error", "Add product", "Failed to add product");
+      onClose()
     }
   };
 
@@ -236,13 +258,13 @@ const AddProductModal = ({ onClose, onUpdated, categories }: Props) => {
                 />
               </div>
             </div>
-          </form>
-          <DialogFooter className="flex w-full justify-between">
+            <DialogFooter className="flex w-full justify-between">
             <Button variant="outline" type="button" onClick={onClose}>
               Cancel
             </Button>
             <Button type="submit">Add Product</Button>
           </DialogFooter>
+          </form>
         </Form>
       </DialogContent>
     </Dialog>

@@ -34,10 +34,10 @@ export type Category = {
 
 const Categories = () => {
   // for loading
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(true);
 
   // for add
-  const [showAddModal, setShowAddModal] = useState(false)
+  const [showAddModal, setShowAddModal] = useState(false);
 
   // for update
   const [showUpdateModal, setShowUpdateModal] = useState(false);
@@ -51,7 +51,7 @@ const Categories = () => {
   const [categories, setCategories] = useState<Category[]>([]);
   const fetchCategories = async () => {
     try {
-      setLoading(true)
+      setLoading(true);
       const response = await axios.get(`${API_URL}/api/categories`, {
         headers: {
           "x-api-key": API_KEY,
@@ -75,74 +75,76 @@ const Categories = () => {
       </div>
       <div className="flex gap-4 items-center justify-between mb-4">
         <Input placeholder="Search category..." />
-        <Button onClick={() => {
-          setShowAddModal(true)
-        }}>
+        <Button
+          onClick={() => {
+            setShowAddModal(true);
+          }}
+        >
           <Plus className="mr-1 text-white" />
           Add Category
         </Button>
       </div>
       {loading ? (
-      <LoadingAnimation/>
-    ) : (
-      <>
-      <div>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>ID</TableHead>
-              <TableHead>Category Name</TableHead>
-              <TableHead>Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {categories.length > 0 ? (
-              categories.map((category) => (
-                <TableRow key={category.category_id}>
-                  <TableCell>{category.category_id}</TableCell>
-                  <TableCell>{category.category_name}</TableCell>
-                  <TableCell>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon">
-                          <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem
-                          onClick={() => {
-                            setSelectedCategory(category);
-                            setShowUpdateModal(true);
-                          }}
-                        >
-                          Edit
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          onClick={() => {
-                            setSelectedCategory(category);
-                            setShowDeleteModal(true);
-                          }}
-                        >
-                          Delete
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </TableCell>
+        <LoadingAnimation />
+      ) : (
+        <>
+          <div>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>ID</TableHead>
+                  <TableHead>Category Name</TableHead>
+                  <TableHead>Actions</TableHead>
                 </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell colSpan={3} className="text-center">
-                  No categories found.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </div>
-      </>
+              </TableHeader>
+              <TableBody>
+                {categories.length > 0 ? (
+                  categories.map((category) => (
+                    <TableRow key={category.category_id}>
+                      <TableCell>{category.category_id}</TableCell>
+                      <TableCell>{category.category_name}</TableCell>
+                      <TableCell>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="icon">
+                              <MoreHorizontal className="h-4 w-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem
+                              onClick={() => {
+                                setSelectedCategory(category);
+                                setShowUpdateModal(true);
+                              }}
+                            >
+                              Edit
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                              onClick={() => {
+                                setSelectedCategory(category);
+                                setShowDeleteModal(true);
+                              }}
+                            >
+                              Delete
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={3} className="text-center">
+                      No categories found.
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </div>
+        </>
       )}
-      
+
       {showUpdateModal && selectedCategory && (
         <UpdateCategoryModal
           category={selectedCategory}
@@ -152,8 +154,8 @@ const Categories = () => {
       )}
       {showAddModal && (
         <AddCategoryModal
-        onClose={() => setShowAddModal(false)}
-        onUpdated={fetchCategories}
+          onClose={() => setShowAddModal(false)}
+          onUpdated={fetchCategories}
         />
       )}
       {showDeleteModal && selectedCategory && (
@@ -164,7 +166,6 @@ const Categories = () => {
         />
       )}
     </div>
-    
   );
 };
 

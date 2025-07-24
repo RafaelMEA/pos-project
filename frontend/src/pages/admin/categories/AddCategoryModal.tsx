@@ -47,11 +47,13 @@ const AddCategoryModal = ({ onClose, onUpdated }: Props) => {
 
   const onAdd = async (data: FormData) => {
     try {
+      const categoryData = {
+        category_name: data.category_name,
+      };
+
       const response = await axios.post(
         `${API_URL}/api/categories`,
-        {
-          category_name: data.category_name,
-        },
+        categoryData,
         {
           headers: {
             "x-api-key": API_KEY,
