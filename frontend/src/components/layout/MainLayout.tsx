@@ -19,7 +19,7 @@ interface MainLayoutProps {
 }
 
 const navigation = [
-  { name: "Dashboard", href: "/", icon: Layout },
+  { name: "Dashboard", href: "/dashboard", icon: Layout },
   {
     name: "Products",
     href: "/products",

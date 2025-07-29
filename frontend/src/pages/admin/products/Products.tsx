@@ -108,7 +108,7 @@ const Products = () => {
                   <img
                     src={product.image || kopiko}
                     alt={product.product_name || "Product Image"}
-                    className="h-full w-full object-cover bg-none"
+                    className="h-50 w-full object-cover bg-none"
                   />
                 </CardHeader>
                 <CardContent className="font-bold">

@@ -89,7 +89,7 @@ const Register = () => {
     <div className="flex justify-center items-center h-screen">
       <Card className="w-[90%] sm:w-[80%] md:w-[70%] lg:w-[60%] xl:w-[50%]">
         <CardHeader>
-          <CardTitle>Register</CardTitle>
+          <CardTitle className="font-bold text-2xl">Sign Up</CardTitle>
         </CardHeader>
         <CardContent>
           <Form {...form}>
