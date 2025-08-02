@@ -1,11 +1,7 @@
-const API_URL = import.meta.env.VITE_API_URL;
-const API_KEY = import.meta.env.VITE_API_KEY;
-
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-
 import { Input } from "@/components/ui/input";
 
 import {
@@ -23,9 +19,8 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import axios from "axios";
-
 import { useAlert } from "@/contexts/AlertContext";
+import { useAuth } from "@/contexts/AuthContext";
 import { DialogFooter } from "@/components/ui/dialog";
 
 const formSchema = z.object({
@@ -38,32 +33,24 @@ type FormData = z.infer<typeof formSchema>;
 const Login = () => {
   const { addAlert } = useAlert();
   const navigate = useNavigate();
+  const { login } = useAuth();
+  
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
   });
 
   const onLogin = async (data: FormData) => {
     try {
-      const response = await axios.post(
-        `${API_URL}/api/auth/login`,
-        {
-          email: data.email,
-          password: data.password,
-        },
-        {
-          headers: {
-            "x-api-key": API_KEY,
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      console.log(response.data);
+      await login(data.email, data.password);
+      
       console.log("User logged in successfully");
       addAlert("success", "Login", "User logged in successfully");
       navigate("/dashboard");
-    } catch (error) {
+    } catch (error: any) {
       console.error("Failed to login user:", error);
-      addAlert("error", "Login", "Failed to login user");
+      
+      const errorMessage = error.response?.data?.message || "Failed to login user";
+      addAlert("error", "Login", errorMessage);
     }
   };
 
