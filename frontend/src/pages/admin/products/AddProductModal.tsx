@@ -70,10 +70,9 @@ const AddProductModal = ({ onClose, onUpdated, categories }: Props) => {
 
   const onAdd = async (data: FormData) => {
     try {
-
       const file = data.product_image as File;
 
-      let imageURL = ""
+      let imageURL = "";
 
       if (file && file.size > 0) {
         imageURL = await uploadImage(file);
@@ -107,7 +106,7 @@ const AddProductModal = ({ onClose, onUpdated, categories }: Props) => {
     } catch (error) {
       console.error("Failed to add product:", error);
       addAlert("error", "Add product", "Failed to add product");
-      onClose()
+      onClose();
     }
   };
 
@@ -259,11 +258,11 @@ const AddProductModal = ({ onClose, onUpdated, categories }: Props) => {
               </div>
             </div>
             <DialogFooter className="flex w-full justify-between">
-            <Button variant="outline" type="button" onClick={onClose}>
-              Cancel
-            </Button>
-            <Button type="submit">Add Product</Button>
-          </DialogFooter>
+              <Button variant="outline" type="button" onClick={onClose}>
+                Cancel
+              </Button>
+              <Button type="submit">Add Product</Button>
+            </DialogFooter>
           </form>
         </Form>
       </DialogContent>

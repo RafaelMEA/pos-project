@@ -2,7 +2,10 @@ const { createClient } = require("@supabase/supabase-js");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
-const { generateAccessToken, generateRefreshToken } = require("../../utils/token");
+const {
+  generateAccessToken,
+  generateRefreshToken,
+} = require("../../utils/token");
 const supabase = createClient(
   process.env.SUPABASE_URL,
   process.env.SUPABASE_SERVICE_ROLE
@@ -23,35 +26,54 @@ exports.login = async (req, res) => {
   if (!user || !(await bcrypt.compare(password, user.password)))
     return res.status(401).json({ message: "Invalid credentials" });
 
-  const jti = crypto.randomUUID();
-  const refreshToken = generateRefreshToken(user, jti);
-  const accessToken = generateAccessToken(user);
+  try {
+    const jti = crypto.randomUUID();
+    const refreshToken = generateRefreshToken(user, jti);
+    const accessToken = generateAccessToken(user);
 
-  await supabase.from("tokens").insert([
-    {
-      user_id: user.id,
-      token: refreshToken,
-      expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-    },
-  ]);
+    const userId = user.user_id || user.id;
 
-  res
-    .cookie("refreshToken", refreshToken, {
-      httpOnly: true,
-      secure: true,
-      sameSite: "Strict",
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-    })
-    .json({
-      accessToken,
-      user: {
-        id: user.id,
-        email: user.email,
-        first_name: user.first_name,
-        last_name: user.last_name,
-        role_id: user.role_id,
+    if (!userId) {
+      console.error("No user ID found in user object:", user);
+      return res.status(500).json({ message: "User ID not found" });
+    }
+
+    const { error } = await supabase.from("tokens").insert([
+      {
+        user_id: userId,
+        token: refreshToken,
+        expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
       },
-    });
+    ]);
+
+    if (error) {
+      console.error("Error inserting token:", error);
+      throw error;
+    }
+
+    res
+      .cookie("refreshToken", refreshToken, {
+        httpOnly: true,
+        secure: false,
+        sameSite: "Lax",
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+      })
+      .json({
+        accessToken,
+        user: {
+          id: userId,
+          email: user.email,
+          first_name: user.first_name,
+          last_name: user.last_name,
+          role_id: user.role_id,
+        },
+      });
+  } catch (error) {
+    console.error("Login error:", error);
+    return res
+      .status(500)
+      .json({ message: "Internal server error during login" });
+  }
 };
 
 exports.logout = async (req, res) => {

@@ -128,8 +128,8 @@ export function MainLayout({ children }: MainLayoutProps) {
                 <AvatarFallback>U</AvatarFallback>
               </Avatar>
               <div>
-                <p className="text-sm font-medium">Admin User</p>
-                <p className="text-xs text-gray-500">Administrator</p>
+                <p className="text-sm font-medium"></p>
+                <p className="text-xs text-gray-500"></p>
               </div>
             </div>
           </div>
