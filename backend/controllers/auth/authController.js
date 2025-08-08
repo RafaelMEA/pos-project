@@ -87,22 +87,65 @@ exports.logout = async (req, res) => {
 
 exports.refresh = async (req, res) => {
   const token = req.cookies.refreshToken;
-  if (!token) return res.status(401).json({ message: "No refresh token" });
+
+  if (!token) {
+    return res.status(401).json({
+      success: false,
+      message: "No refresh token",
+    });
+  }
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const { data: stored } = await supabase
+
+    // Get user data from database
+    const { data: user, error } = await supabase
+      .from("users")
+      .select("*")
+      .eq("user_id", decoded.id)
+      .single();
+
+    if (error || !user) {
+      return res.status(401).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    // Verify token exists in database
+    const { data: storedToken } = await supabase
       .from("tokens")
-      .select("id")
+      .select("*")
       .eq("token", token)
       .eq("user_id", decoded.id)
       .single();
 
-    if (!stored) return res.status(403).json({ message: "Invalid token" });
+    if (!storedToken) {
+      return res.status(403).json({
+        success: false,
+        message: "Invalid refresh token",
+      });
+    }
 
-    const accessToken = generateAccessToken({ id: decoded.id });
-    res.json({ accessToken });
-  } catch {
-    res.status(403).json({ message: "Token expired or invalid" });
+    // Generate new access token
+    const accessToken = generateAccessToken(user);
+
+    res.json({
+      success: true,
+      accessToken,
+      user: {
+        id: user.user_id,
+        email: user.email,
+        first_name: user.first_name,
+        last_name: user.last_name,
+        role_id: user.role_id,
+      },
+    });
+  } catch (error) {
+    console.error("Refresh token error:", error);
+    res.status(403).json({
+      success: false,
+      message: "Token expired or invalid",
+    });
   }
 };

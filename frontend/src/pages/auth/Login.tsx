@@ -1,11 +1,8 @@
-const API_URL = import.meta.env.VITE_API_URL;
-const API_KEY = import.meta.env.VITE_API_KEY;
-
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import axios from "axios";
+import { useAuth } from "@/contexts/AuthContext";
 import {
   Form,
   FormControl,
@@ -34,6 +31,7 @@ type FormData = z.infer<typeof formSchema>;
 const Login = () => {
   const { addAlert } = useAlert();
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -41,13 +39,7 @@ const Login = () => {
 
   const onLogin = async (data: FormData) => {
     try {
-      const response = await axios.post(`${API_URL}/api/auth/login`, data, {
-        headers: {
-          "x-api-key": API_KEY,
-          "Content-Type": "application/json",
-        },
-      });
-      console.log(response.data);
+      await login(data);
       console.log("User logged in successfully");
       addAlert("success", "Login", "User logged in successfully");
       navigate("/dashboard");
