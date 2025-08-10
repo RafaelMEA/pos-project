@@ -45,10 +45,7 @@ const Login = () => {
       navigate("/dashboard");
     } catch (error: any) {
       console.error("Failed to login user:", error);
-
-      const errorMessage =
-        error.response?.data?.message || "Failed to login user";
-      addAlert("error", "Login", errorMessage);
+      addAlert("error", "Login", "Failed to login user");
     }
   };
 

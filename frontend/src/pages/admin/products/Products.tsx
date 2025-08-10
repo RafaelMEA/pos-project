@@ -12,6 +12,8 @@ import LoadingAnimation from "@/components/LoadingAnimation";
 
 import axios from "axios";
 
+import { useNavigate } from "react-router-dom";
+
 import {
   Card,
   CardContent,
@@ -36,6 +38,7 @@ export type Category = {
 
 const Products = () => {
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   // fetching categories
   const [categories, setCategories] = useState<Category[]>([]);
@@ -103,7 +106,9 @@ const Products = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-4">
           {products.length > 0 ? (
             products.map((product) => (
-              <Card className="gap-2" key={product.product_id}>
+              <Card className="gap-2" key={product.product_id} onClick={() => navigate(`/products/${encodeURIComponent(product.product_name.toLowerCase().replace(/\s+/g, '-'))}`, {
+                state: { product }
+              })}>
                 <CardHeader className="">
                   <img
                     src={product.image || kopiko}

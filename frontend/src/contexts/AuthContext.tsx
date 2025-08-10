@@ -36,34 +36,34 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [accessToken, setAccessToken] = useState<string | null>(null);
 
   const checkAuth = async () => {
-  try {
-    const response = await axios.get(`${API_URL}/api/auth/refresh`, {
-      withCredentials: true,
-      headers: {
-        'x-api-key': API_KEY
+    try {
+      const response = await axios.get(`${API_URL}/api/auth/refresh`, {
+        withCredentials: true,
+        headers: {
+          "x-api-key": API_KEY,
+        },
+      });
+
+      if (response.data.success) {
+        setAccessToken(response.data.accessToken);
+        setUser(response.data.user);
       }
-    });
-
-    if (response.data.success) {
-      setAccessToken(response.data.accessToken);
-      setUser(response.data.user);
+    } catch (error: any) {
+      if (error.response?.status !== 401) {
+        console.error("Auth check failed:", error);
+      }
+      setUser(null);
+      setAccessToken(null);
+    } finally {
+      setLoading(false);
     }
-  } catch (error: any) {
-    if (error.response?.status !== 401) {
-      console.error('Auth check failed:', error);
-    }
-    setUser(null);
-    setAccessToken(null);
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
-// Remove the duplicate useEffect for checkAuth
-// Keep only one initial auth check
-useEffect(() => {
-  checkAuth();
-}, []);
+  // Remove the duplicate useEffect for checkAuth
+  // Keep only one initial auth check
+  useEffect(() => {
+    checkAuth();
+  }, []);
 
   const login = async (userData: any) => {
     try {
@@ -86,33 +86,32 @@ useEffect(() => {
   };
 
   useEffect(() => {
-  if (!user) return; // Don't refresh if no user
+    if (!user) return; // Don't refresh if no user
 
-  const refreshToken = async () => {
-    try {
-      const response = await axios.get(`${API_URL}/api/auth/refresh`, {
-        withCredentials: true,
-        headers: {
-          'x-api-key': API_KEY
+    const refreshToken = async () => {
+      try {
+        const response = await axios.get(`${API_URL}/api/auth/refresh`, {
+          withCredentials: true,
+          headers: {
+            "x-api-key": API_KEY,
+          },
+        });
+
+        if (response.data.success) {
+          setAccessToken(response.data.accessToken);
+          setUser(response.data.user);
         }
-      });
-
-      if (response.data.success) {
-        setAccessToken(response.data.accessToken);
-        setUser(response.data.user);
+      } catch (error) {
+        console.error("Token refresh failed:", error);
+        setUser(null);
+        setAccessToken(null);
+        navigate("/login");
       }
-    } catch (error) {
-      console.error('Token refresh failed:', error);
-      setUser(null);
-      setAccessToken(null);
-      navigate('/login');
-    }
-  };
+    };
 
-  const interval = setInterval(refreshToken, 14 * 60 * 1000);
-  return () => clearInterval(interval);
-}, [user, navigate]);
-
+    const interval = setInterval(refreshToken, 14 * 60 * 1000);
+    return () => clearInterval(interval);
+  }, [user, navigate]);
 
   const logout = async () => {
     try {
