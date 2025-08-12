@@ -107,7 +107,7 @@ const Products = () => {
           {products.length > 0 ? (
             products.map((product) => (
               <Card className="gap-2" key={product.product_id} onClick={() => navigate(`/products/${encodeURIComponent(product.product_name.toLowerCase().replace(/\s+/g, '-'))}`, {
-                state: { product }
+                state: { product, categories}
               })}>
                 <CardHeader className="">
                   <img

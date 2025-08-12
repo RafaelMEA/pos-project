@@ -7,7 +7,6 @@ import {
   User,
   ChartBarStacked,
   Users,
-  X,
   ChevronDown,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -143,13 +142,6 @@ export function MainLayout({ children }: MainLayoutProps) {
           <div className="flex h-full flex-col">
             <div className="flex items-center justify-between px-4 py-3 border-b">
               <h1 className="text-xl font-bold">POS System</h1>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setIsOpen(false)}
-              >
-                <X className="h-5 w-5" />
-              </Button>
             </div>
             <div className="flex-1 overflow-y-auto">
               <NavigationLinks mobile />
