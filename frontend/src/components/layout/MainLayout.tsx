@@ -23,6 +23,7 @@ import {
 import { useAuth } from "@/contexts/AuthContext";
 import { useAlert } from "@/contexts/AlertContext";
 import { cn } from "@/lib/utils";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 
 interface MainLayoutProps {
   children: React.ReactNode;
@@ -82,7 +83,7 @@ export function MainLayout({ children }: MainLayoutProps) {
         <p className="text-sm font-medium truncate">
           {user?.first_name} {user?.last_name}
         </p>
-        <p className="text-xs text-gray-500 truncate">{user?.email}</p>
+        <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{user?.email}</p>
       </div>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
@@ -110,7 +111,7 @@ export function MainLayout({ children }: MainLayoutProps) {
               "group flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200",
               isActive
                 ? "bg-primary/10 text-primary"
-                : "text-gray-700 hover:bg-gray-50",
+                : "text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700",
               mobile && "hover:bg-gray-100"
             )
           }
@@ -123,7 +124,7 @@ export function MainLayout({ children }: MainLayoutProps) {
   );
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
+    <div className="flex min-h-screen bg-gray-50 dark:bg-gray-900">
       <AlertMessage />
 
       {/* Mobile Sidebar */}
@@ -155,9 +156,10 @@ export function MainLayout({ children }: MainLayoutProps) {
 
       {/* Desktop Sidebar */}
       <div className="hidden md:flex md:w-64 md:flex-col md:fixed md:inset-y-0">
-        <div className="flex flex-col flex-grow border-r border-gray-200 bg-white">
-          <div className="flex items-center h-16 px-4 border-b">
+        <div className="flex flex-col flex-grow border-r border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+          <div className="flex items-center justify-between h-16 px-4 border-b">
             <h1 className="text-xl font-bold">POS System</h1>
+            <ThemeToggle />
           </div>
           <div className="flex-1 flex flex-col overflow-y-auto">
             <div className="flex-1 py-4">
