@@ -148,7 +148,7 @@ const EditProduct = () => {
       const productData = {
         product_name: data.product_name,
         product_details: data.product_details,
-        price: data.product_price,
+        price: parseFloat(data.product_price.toString()), // Ensure proper decimal handling
         quantity: data.product_quantity,
         supplier: data.product_supplier,
         image: imageURL,
@@ -166,12 +166,33 @@ const EditProduct = () => {
         }
       );
       
+      // Check for API-level errors in the response
+      if (response.data.error) {
+        throw new Error(response.data.error);
+      }
+      
       console.log(response.data);
       addAlert("success", "Update Product", "Product updated successfully");
       navigate("/products");
-    } catch (error) {
+    } catch (error: any) {
       console.error("Failed to update product:", error);
-      addAlert("error", "Update product", "Failed to update product");
+      let errorMessage = "Failed to update product";
+      
+      if (error.response) {
+        // The request was made and the server responded with a status code
+        // that falls out of the range of 2xx
+        errorMessage = error.response.data?.error || error.response.data?.message || errorMessage;
+        console.error("Response data:", error.response.data);
+      } else if (error.request) {
+        // The request was made but no response was received
+        errorMessage = "No response from server. Check your network connection.";
+        console.error("No response received:", error.request);
+      } else {
+        // Something happened in setting up the request
+        errorMessage = error.message || errorMessage;
+      }
+
+      addAlert("error", "Update Product", errorMessage);
     }
   };
 
