@@ -71,7 +71,71 @@ const storeProduct = async (product) => {
   return data;
 };
 
+const updateProduct = async (productId, product) => {
+  try {
+    const {
+      product_name,
+      product_details,
+      price,
+      quantity,
+      supplier,
+      image,
+      category_id,
+    } = product;
+
+    const { data, error } = await supabase
+      .from("products")
+      .update({
+        product_name,
+        product_details,
+        price: parseFloat(price),
+        quantity: parseInt(quantity, 10),
+        supplier,
+        image,
+        category_id: parseInt(category_id, 10),
+      })
+      .eq("product_id", productId)
+      .select();
+
+    if (error) {
+      console.error("Error updating product:", error);
+      throw new Error(`Failed to update product: ${error.message}`);
+    }
+    return { data, error: null };
+  } catch (error) {
+    console.error("Unexpected error in updateProduct:", error);
+    return {
+      data: null,
+      error: error.message || "An unexpected error occurred",
+    };
+  }
+};
+
+const deleteProduct = async (productId) => {
+  try {
+    const { data, error } = await supabase
+      .from("products")
+      .delete()
+      .eq("product_id", productId)
+      .select();
+
+    if (error) {
+      console.error("Error deleting product:", error);
+      throw new Error(`Failed to delete product: ${error.message}`);
+    }
+    return { data, error: null };
+  } catch (error) {
+    console.error("Unexpected error in deleteProduct:", error);
+    return {
+      data: null,
+      error: error.message || "An unexpected error occurred",
+    };
+  }
+};
+
 module.exports = {
   getProducts,
   storeProduct,
+  updateProduct,
+  deleteProduct,
 };

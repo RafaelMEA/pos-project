@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/card";
 
 import AddProductModal from "./AddProductModal";
+import DeleteProductModal from "./DeleteProductModal";
 
 export type Product = {
   product_id: number;
@@ -60,6 +61,8 @@ const Products = () => {
 
   const [products, setProducts] = useState<Product[]>([]);
   const [showAddModal, setShowAddModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
   const fetchProducts = async () => {
     try {
@@ -127,10 +130,23 @@ const Products = () => {
                 <CardContent>₱{product.price}</CardContent>
                 <div className="flex justify-center items-center">
                   <CardFooter>
-                    <Pencil className="h-5 w-5" />
+                    <Pencil 
+                      className="h-5 w-5 cursor-pointer hover:text-blue-600" 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate(`/products/edit/${product.product_id}`);
+                      }}
+                    />
                   </CardFooter>
                   <CardFooter>
-                    <Trash className="h-5 w-5" />
+                    <Trash 
+                      className="h-5 w-5 cursor-pointer hover:text-red-600" 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setSelectedProduct(product);
+                        setShowDeleteModal(true);
+                      }}
+                    />
                   </CardFooter>
                 </div>
               </Card>
@@ -145,6 +161,16 @@ const Products = () => {
           onClose={() => setShowAddModal(false)}
           onUpdated={fetchProducts}
           categories={categories}
+        />
+      )}
+      {showDeleteModal && selectedProduct && (
+        <DeleteProductModal
+          product={selectedProduct}
+          onClose={() => {
+            setShowDeleteModal(false);
+            setSelectedProduct(null);
+          }}
+          onUpdated={fetchProducts}
         />
       )}
     </div>

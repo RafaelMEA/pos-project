@@ -24,3 +24,28 @@ exports.storeProduct = async (req, res) => {
     }
 };
 
+exports.updateProduct = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { data, error } = await productModel.updateProduct(id, req.body);
+        if (error) {
+            return res.status(500).json({ error });
+        }
+        return res.status(200).json(data);
+    } catch (error) {
+        return res.status(500).json({ error: error.message });
+    }
+};
+
+exports.deleteProduct = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { data, error } = await productModel.deleteProduct(id);
+        if (error) {
+            return res.status(500).json({ error: error.message });
+        }
+        return res.status(200).json(data);
+    } catch (error) {
+        return res.status(500).json({ error: error.message });
+    }
+};
