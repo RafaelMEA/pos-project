@@ -12,6 +12,7 @@ import { AuthProvider } from "./contexts/AuthContext";
 import Dashboard from "./pages/admin/Dashboard";
 import Products from "./pages/admin/products/Products";
 import ViewProduct from "./pages/admin/products/ViewProduct";
+import UpdateProductModal from "./pages/admin/products/UpdateProductModal";
 import Categories from "./pages/admin/categories/Categories";
 import Transaction from "./pages/admin/Transaction";
 import Customers from "./pages/admin/Customers";
@@ -53,6 +54,7 @@ function App() {
             {/* for products */}
             <Route path="/products" element={<Products />} />
             <Route path="/products/:productName" element={<ViewProduct />} />
+            <Route path="/products/:productName/edit" element={<UpdateProductModal />} />
             <Route path="/categories" element={<Categories />} />
             <Route path="/transaction" element={<Transaction />} />
             <Route path="/customers" element={<Customers />} />

@@ -41,3 +41,10 @@ app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
   console.log("API Key Authentication is enabled");
 });
+
+app.use((error, req, res, next) => {
+  if (error) {
+    return res.status(500).json({ error: error.message });
+  }
+  next();
+});

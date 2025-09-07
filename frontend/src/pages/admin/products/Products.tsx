@@ -4,7 +4,7 @@ const API_KEY = import.meta.env.VITE_API_KEY;
 import { useState, useEffect } from "react";
 import kopiko from "@/assets/kopiko.jfif";
 
-import { Pencil, Trash, Plus, Cross } from "lucide-react";
+import { Pencil, Trash, Plus, Cross, Eye } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -22,13 +22,18 @@ import {
 } from "@/components/ui/card";
 
 import AddProductModal from "./AddProductModal";
+import UpdateProductModal from "./UpdateProductModal";
 
 export type Product = {
   product_id: number;
   product_name: string;
-  category_id: number;
+  product_details: string;
   price: number;
+  quantity: number;
+  barcode: string;
+  supplier: string;
   image: string;
+  category_id: number;
 };
 
 export type Category = {
@@ -60,6 +65,7 @@ const Products = () => {
 
   const [products, setProducts] = useState<Product[]>([]);
   const [showAddModal, setShowAddModal] = useState(false);
+  const [editProduct, setEditProduct] = useState<Product | null>(null);
 
   const fetchProducts = async () => {
     try {
@@ -106,9 +112,7 @@ const Products = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-4">
           {products.length > 0 ? (
             products.map((product) => (
-              <Card className="gap-2" key={product.product_id} onClick={() => navigate(`/products/${encodeURIComponent(product.product_name.toLowerCase().replace(/\s+/g, '-'))}`, {
-                state: { product, categories}
-              })}>
+              <Card className="gap-2" key={product.product_id}>
                 <CardHeader className="">
                   <img
                     src={product.image || kopiko}
@@ -127,7 +131,24 @@ const Products = () => {
                 <CardContent>₱{product.price}</CardContent>
                 <div className="flex justify-center items-center">
                   <CardFooter>
-                    <Pencil className="h-5 w-5" />
+                    <Eye
+                      className="h-5 w-5 cursor-pointer"
+                      onClick={() =>
+                        navigate(`/products/${product.product_id}`, {
+                          state: { product, categories },
+                        })
+                      }
+                    />
+                  </CardFooter>
+                  <CardFooter>
+                    <Pencil
+                      className="h-5 w-5 cursor-pointer"
+                      onClick={() =>
+                        navigate(`/products/${product.product_id}/edit`, {
+                          state: { product, categories },
+                        })
+                      }
+                    />
                   </CardFooter>
                   <CardFooter>
                     <Trash className="h-5 w-5" />
@@ -145,6 +166,17 @@ const Products = () => {
           onClose={() => setShowAddModal(false)}
           onUpdated={fetchProducts}
           categories={categories}
+        />
+      )}
+      {editProduct && (
+        <UpdateProductModal
+          product={editProduct}
+          categories={categories}
+          onClose={() => setEditProduct(null)} // <-- close modal
+          onUpdated={() => {
+            setEditProduct(null);
+            fetchProducts(); // <-- refresh products after update
+          }}
         />
       )}
     </div>

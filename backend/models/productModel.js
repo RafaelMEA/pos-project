@@ -71,7 +71,25 @@ const storeProduct = async (product) => {
   return data;
 };
 
+const updateProduct = async (id, updates) => {
+  try {
+    const { data, error } = await supabase
+      .from("products")
+      .update(updates)
+      .eq("product_id", id)
+      .select()
+      .single();
+
+    if (error) throw new Error(error.message);
+    if (!data) throw new Error("Product not found or not updated");
+    return { data, error: null };
+  } catch (error) {
+    return { data: null, error: { message: error.message || String(error) } };
+  }
+};
+
 module.exports = {
   getProducts,
   storeProduct,
+  updateProduct,
 };
