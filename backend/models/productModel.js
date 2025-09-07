@@ -73,6 +73,12 @@ const storeProduct = async (product) => {
 
 const updateProduct = async (productId, product) => {
   try {
+    // Convert productId to integer
+    const id = parseInt(productId, 10);
+    if (isNaN(id)) {
+      throw new Error("Invalid product ID");
+    }
+
     const {
       product_name,
       product_details,
@@ -94,13 +100,16 @@ const updateProduct = async (productId, product) => {
         image,
         category_id: parseInt(category_id, 10),
       })
-      .eq("product_id", productId)
+      .eq("product_id", id)  // Use converted integer ID
       .select();
 
     if (error) {
-      console.error("Error updating product:", error);
+      console.error("Supabase update error:", error);
       throw new Error(`Failed to update product: ${error.message}`);
     }
+    
+    // Log success for debugging
+    console.log("Product updated successfully:", data);
     return { data, error: null };
   } catch (error) {
     console.error("Unexpected error in updateProduct:", error);
