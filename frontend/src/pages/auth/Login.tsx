@@ -169,7 +169,7 @@ const Login = () => {
                       <span>Signing in...</span>
                     </div>
                   ) : (
-                    <div className="flex items-center space-x-2">
+                    <div className="flex items-center space-x-2 text-black">
                       <LogIn className="w-4 h-4" />
                       <span>Sign In</span>
                     </div>

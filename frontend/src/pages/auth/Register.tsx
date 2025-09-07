@@ -345,8 +345,8 @@ const Register = () => {
                       <span>Creating account...</span>
                     </div>
                   ) : (
-                    <div className="flex items-center space-x-2">
-                      <UserPlus className="w-4 h-4" />
+                    <div className="flex items-center space-x-2 text-black">
+                      <UserPlus className="w-4 h-4 " />
                       <span>Create Account</span>
                     </div>
                   )}
