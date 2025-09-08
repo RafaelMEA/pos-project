@@ -12,13 +12,14 @@ const app = express();
 const PORT = process.env.PORT || 8080;
 
 app.use(cookieParser());
-app.use(cors({
-  origin: 'http://localhost:5173',
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']
-}));
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  })
+);
 app.use(express.json());
-
 
 // authentication routes
 app.use("/api", apiKeyAuth);
@@ -27,6 +28,9 @@ app.use("/api/auth", authRoutes);
 // table routes
 const userRoutes = require("./routes/userRoutes");
 app.use("/api/users", userRoutes);
+
+const customerRoutes = require("./routes/customerRoutes");
+app.use("/api/customers", customerRoutes);
 
 const categoryRoutes = require("./routes/categoryRoutes");
 app.use("/api/categories", categoryRoutes);

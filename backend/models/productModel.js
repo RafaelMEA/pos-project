@@ -3,7 +3,10 @@ const { nanoid } = require("nanoid");
 
 const getProducts = async () => {
   try {
-    const { data, error } = await supabase.from("products").select();
+    const { data, error } = await supabase
+      .from("products")
+      .select()
+      .eq("is_deleted", false);
 
     if (error) {
       console.error("Supabase query error:", error);
@@ -100,14 +103,14 @@ const updateProduct = async (productId, product) => {
         image,
         category_id: parseInt(category_id, 10),
       })
-      .eq("product_id", id)  // Use converted integer ID
+      .eq("product_id", id) // Use converted integer ID
       .select();
 
     if (error) {
       console.error("Supabase update error:", error);
       throw new Error(`Failed to update product: ${error.message}`);
     }
-    
+
     // Log success for debugging
     console.log("Product updated successfully:", data);
     return { data, error: null };
